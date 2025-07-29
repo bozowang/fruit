@@ -1,809 +1,108 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>水果吃角子老虎機</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #4a00e0;
-            --secondary: #8e2de2;
-            --accent: #ff6b6b;
-            --win: #ffd700;
-            --dark: #2c3e50;
-            --light: #f8f9fa;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-            color: var(--light);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: rgba(25, 25, 35, 0.92);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* 標題樣式 */
-        .header {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .header i {
-            margin-right: 15px;
-            animation: spin 3s infinite linear;
-        }
-
-        /* 遊戲區域 */
-        .game-area {
-            padding: 30px 20px;
-            position: relative;
-        }
-
-        /* 老虎機轉輪容器 */
-        .slot-machine {
-            background: rgba(30, 30, 45, 0.8);
-            border-radius: 15px;
-            padding: 25px 15px;
-            margin: 0 auto 30px;
-            max-width: 700px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        .slot-machine::before {
-            content: "";
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            pointer-events: none;
-        }
-
-        .reels-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 15px 0;
-            position: relative;
-        }
-
-        /* 轉輪樣式 - 添加光澤和陰影效果 */
-        .slot-reel {
-            width: 130px;
-            height: 160px;
-            background: linear-gradient(145deg, #1e1e2d, #252538);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 5rem;
-            box-shadow: 
-                inset 0 0 15px rgba(0, 0, 0, 0.8),
-                0 5px 15px rgba(0, 0, 0, 0.5),
-                0 0 0 4px rgba(74, 0, 224, 0.3);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        /* 光澤效果 */
-        .slot-reel::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
-            z-index: 2;
-        }
-
-        .slot-reel::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
-            z-index: 2;
-        }
-
-        /* 控制面板 */
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 0 20px;
-        }
-
-        /* 旋轉按鈕 - 懸停和點擊效果 */
-        .spin-button {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            font-size: 1.8rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 
-                0 8px 20px rgba(0, 0, 0, 0.3),
-                0 0 15px rgba(142, 45, 226, 0.5);
-            position: relative;
-            overflow: hidden;
-            z-index: 2;
-            letter-spacing: 2px;
-        }
-
-        .spin-button:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 
-                0 12px 25px rgba(0, 0, 0, 0.4),
-                0 0 25px rgba(142, 45, 226, 0.7);
-        }
-
-        .spin-button:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.3),
-                0 0 10px rgba(142, 45, 226, 0.5);
-        }
-
-        .spin-button::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 30px;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(25deg);
-            transition: all 0.7s;
-            z-index: -1;
-        }
-
-        .spin-button:hover::before {
-            left: 120%;
-        }
-
-        /* 訊息框 */
-        .message-box {
-            background: rgba(40, 40, 55, 0.8);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 600;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-
-        /* 統計資訊 */
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            max-width: 500px;
-            background: rgba(30, 30, 45, 0.7);
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-box {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: #aaa;
-        }
-
-        /* 中獎彈窗 */
-        .win-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .win-popup.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .win-content {
-            background: linear-gradient(135deg, #1e1e2d, #2a2a40);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            max-width: 90%;
-            width: 600px;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
-            border: 3px solid var(--win);
-            position: relative;
-            transform: scale(0.8);
-            transition: transform 0.5s ease;
-        }
-
-        .win-popup.active .win-content {
-            transform: scale(1);
-        }
-
-        .win-content h2 {
-            font-size: 3.5rem;
-            color: var(--win);
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-        }
-
-        .win-content p {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .prize-img {
-            width: 200px;
-            height: 150px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin: 20px auto;
-            border: 3px solid var(--win);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .close-btn:hover {
-            transform: rotate(90deg) scale(1.1);
-            background: #ff4757;
-        }
-
-        /* 限制訊息 */
-        .limit-message {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            flex-direction: column;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .limit-message h2 {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: 30px;
-        }
-
-        .limit-message p {
-            font-size: 1.8rem;
-            max-width: 600px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* 彩色紙屑 */
-        .confetti {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background: #f00;
-            top: -10px;
-            opacity: 0;
-        }
-
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .slot-reel {
-                width: 100px;
-                height: 140px;
-                font-size: 4rem;
-            }
-            
-            .spin-button {
-                padding: 15px 40px;
-                font-size: 1.5rem;
-            }
-            
-            .message-box {
-                font-size: 1.2rem;
-            }
-            
-            .stat-value {
-                font-size: 1.8rem;
-            }
-            
-            .win-content h2 {
-                font-size: 2.5rem;
-            }
-            
-            .win-content p {
-                font-size: 1.4rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .reels-container {
-                gap: 10px;
-            }
-            
-            .slot-reel {
-                width: 80px;
-                height: 120px;
-                font-size: 3.5rem;
-            }
-            
-            .spin-button {
-                padding: 12px 30px;
-                font-size: 1.3rem;
-            }
-            
-            .stat-value {
-                font-size: 1.5rem;
-            }
-            
-            .win-content {
-                padding: 30px 20px;
-            }
-            
-            .win-content h2 {
-                font-size: 2rem;
-            }
-        }
-
-        /* 動畫 */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes confetti-fall {
-            0% { transform: translateY(0) rotate(0); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吃角子老虎機 - 贏取波士頓花生奶油堡！</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f1e3;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #ff6b6b;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .slot {
+      width: 100px;
+      height: 100px;
+      margin: 0 10px;
+      border: 4px solid #333;
+      border-radius: 10px;
+      font-size: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+    }
+    .spin-btn {
+      background-color: #ff9f1a;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.2em;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .spin-btn:hover {
+      background-color: #ff6b6b;
+    }
+    #result {
+      font-size: 1.5em;
+      color: #2d3436;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <!-- 限制訊息 (初始隱藏) -->
-    <div class="limit-message" id="limitMessage" style="display: none;">
-        <h2><i class="fas fa-exclamation-triangle"></i> 遊玩次數已達上限</h2>
-        <p>為確保公平性，同一設備/IP每天只能遊玩一次</p>
-        <p>請明天再來挑戰！</p>
-        <p class="stat-value">24:00:00</p>
-        <p>後重置</p>
-    </div>
 
-    <!-- 主遊戲容器 -->
-    <div class="container">
-        <!-- 標題 -->
-        <div class="header">
-            <h1><i class="fas fa-slot-machine"></i> 水果吃角子老虎機</h1>
-        </div>
-        
-        <!-- 遊戲區域 -->
-        <div class="game-area">
-            <!-- 老虎機 -->
-            <div class="slot-machine">
-                <div class="reels-container">
-                    <div class="slot-reel" id="reel1">🍎</div>
-                    <div class="slot-reel" id="reel2">🍊</div>
-                    <div class="slot-reel" id="reel3">🍌</div>
-                </div>
-            </div>
-            
-            <!-- 控制面板 -->
-            <div class="control-panel">
-                <button class="spin-button" id="spinButton">
-                    <i class="fas fa-play mr-2"></i>開始旋轉
-                </button>
-                
-                <div class="message-box" id="message">
-                    點擊按鈕開始遊戲！
-                </div>
-                
-                <div class="stats">
-                    <div class="stat-box">
-                        <div class="stat-value" id="totalSpins">0</div>
-                        <div class="stat-label">總旋轉次數</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="wins">0</div>
-                        <div class="stat-label">中獎次數</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="winRate">0%</div>
-                        <div class="stat-label">中獎率</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 中獎彈窗 -->
-    <div class="win-popup" id="winPopup">
-        <div class="win-content">
-            <div class="close-btn" id="closeWinPopup">
-                <i class="fas fa-times"></i>
-            </div>
-            <h2><i class="fas fa-trophy"></i> 恭喜中獎！</h2>
-            <p>您贏得了 <span style="color: var(--win); font-weight: bold;">波士頓花生奶油堡</span></p>
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="波士頓花生奶油堡" class="prize-img">
-            <p>請截圖此畫面並聯繫客服領取獎品</p>
-            <button class="spin-button" style="margin-top: 20px;" id="claimPrize">
-                <i class="fas fa-gift"></i> 領取獎品
-            </button>
-        </div>
-    </div>
-    
-    <!-- 音效 -->
-    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1042.mp3"></audio>
-    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
-    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
-    
-    <script>
-        // 遊戲狀態
-        const gameState = {
-            totalSpins: 0,
-            wins: 0,
-            winRate: 0,
-            isSpinning: false,
-            lastPlayed: null
-        };
+  <h1>🎰 吃角子老虎機｜贏取波士頓花生奶油堡！</h1>
 
-        // 獲取DOM元素
-        const reel1 = document.getElementById('reel1');
-        const reel2 = document.getElementById('reel2');
-        const reel3 = document.getElementById('reel3');
-        const spinButton = document.getElementById('spinButton');
-        const messageDisplay = document.getElementById('message');
-        const totalSpinsDisplay = document.getElementById('totalSpins');
-        const winsDisplay = document.getElementById('wins');
-        const winRateDisplay = document.getElementById('winRate');
-        const winPopup = document.getElementById('winPopup');
-        const closeWinPopup = document.getElementById('closeWinPopup');
-        const limitMessage = document.getElementById('limitMessage');
-        const claimPrize = document.getElementById('claimPrize');
-        
-        // 音效
-        const spinSound = document.getElementById('spinSound');
-        const winSound = document.getElementById('winSound');
-        const clickSound = document.getElementById('clickSound');
-        
-        // 定義水果
-        const fruits = ['🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🥝', '🥭', '🍒'];
-        
-        // 中獎率 (5%)
-        const WIN_RATE = 5;
-        
-        // 初始化遊戲
-        function initGame() {
-            // 檢查localStorage中是否有上次遊玩記錄
-            const lastPlayed = localStorage.getItem('lastPlayed');
-            const today = new Date().toDateString();
-            
-            if (lastPlayed === today) {
-                // 今天已經玩過
-                showLimitMessage();
-            } else {
-                // 可以玩
-                spinButton.disabled = false;
-                messageDisplay.textContent = "點擊按鈕開始遊戲！";
-            }
-            
-            // 加載遊戲統計
-            loadStats();
-            updateStatsDisplay();
-        }
-        
-        // 顯示限制訊息
-        function showLimitMessage() {
-            limitMessage.style.display = "flex";
-            spinButton.disabled = true;
-            messageDisplay.textContent = "今日遊玩次數已達上限";
-            
-            // 顯示重置時間
-            updateResetTimer();
-            setInterval(updateResetTimer, 1000);
-        }
-        
-        // 更新重置時間
-        function updateResetTimer() {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
-            
-            const diff = tomorrow - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.querySelector('.limit-message .stat-value').textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        // 加載統計數據
-        function loadStats() {
-            const stats = JSON.parse(localStorage.getItem('slotStats') || '{}';
-            gameState.totalSpins = stats.totalSpins || 0;
-            gameState.wins = stats.wins || 0;
-            gameState.winRate = stats.winRate || 0;
-        }
-        
-        // 保存統計數據
-        function saveStats() {
-            const stats = {
-                totalSpins: gameState.totalSpins,
-                wins: gameState.wins,
-                winRate: gameState.winRate
-            };
-            localStorage.setItem('slotStats', JSON.stringify(stats));
-        }
-        
-        // 更新統計顯示
-        function updateStatsDisplay() {
-            totalSpinsDisplay.textContent = gameState.totalSpins;
-            winsDisplay.textContent = gameState.wins;
-            winRateDisplay.textContent = gameState.winRate.toFixed(1) + '%';
-        }
-        
-        // 創建彩色紙屑
-        function createConfetti() {
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff7700'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 15 + 5 + 'px';
-                confetti.style.height = Math.random() * 15 + 5 + 'px';
-                confetti.style.opacity = '0';
-                document.body.appendChild(confetti);
-                
-                // 隨機動畫持續時間
-                const duration = 3000 + Math.random() * 3000;
-                
-                // 動畫
-                const animation = confetti.animate([
-                    { transform: `translateY(0) rotate(0)`, opacity: 1 },
-                    { transform: `translateY(${100 + Math.random() * 20}vh) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 }
-                ], {
-                    duration: duration,
-                    easing: 'cubic-bezier(0,0.9,0.57,1)'
-                });
-                
-                // 動畫結束後移除元素
-                animation.onfinish = () => confetti.remove();
-            }
-        }
-        
-        // 處理旋轉
-        function spin() {
-            if (gameState.isSpinning) return;
-            
-            // 播放點擊音效
-            clickSound.currentTime = 0;
-            clickSound.play();
-            
-            gameState.isSpinning = true;
-            spinButton.disabled = true;
-            messageDisplay.textContent = '旋轉中...';
-            
-            // 播放旋轉音效
-            spinSound.currentTime = 0;
-            spinSound.play();
-            
-            // 更新統計
-            gameState.totalSpins++;
-            gameState.winRate = (gameState.wins / gameState.totalSpins) * 100;
-            updateStatsDisplay();
-            saveStats();
-            
-            // 決定是否中獎
-            const winChance = Math.random() * 100;
-            const isWin = winChance <= WIN_RATE;
-            
-            let selectedFruits = [];
-            
-            if (isWin) {
-                // 中獎 - 三個相同水果
-                const winningFruit = fruits[Math.floor(Math.random() * fruits.length)];
-                selectedFruits = [winningFruit, winningFruit, winningFruit];
-                gameState.wins++;
-            } else {
-                // 未中獎 - 確保三個水果不完全相同
-                do {
-                    selectedFruits = [
-                        fruits[Math.floor(Math.random() * fruits.length)],
-                        fruits[Math.floor(Math.random() * fruits.length)],
-                        fruits[Math.floor(Math.random() * fruits.length)]
-                    ];
-                } while (selectedFruits[0] === selectedFruits[1] && selectedFruits[1] === selectedFruits[2]);
-            }
-            
-            // 動畫設置
-            let spinCount = 0;
-            const maxSpins = 40;
-            const intervalTime = 70;
-            
-            // 旋轉動畫
-            const spinInterval = setInterval(() => {
-                reel1.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                reel2.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                reel3.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                
-                spinCount++;
-                
-                // 減速效果
-                if (spinCount > maxSpins * 0.7) {
-                    clearInterval(spinInterval);
-                    const slowInterval = setInterval(() => {
-                        reel1.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                        
-                        if (spinCount > maxSpins * 0.8) {
-                            reel2.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                        }
-                        
-                        if (spinCount > maxSpins * 0.9) {
-                            reel3.textContent = fruits[Math.floor(Math.random() * fruits.length)];
-                        }
-                        
-                        spinCount++;
-                        
-                        if (spinCount >= maxSpins) {
-                            clearInterval(slowInterval);
-                            
-                            // 設置最終結果
-                            reel1.textContent = selectedFruits[0];
-                            reel2.textContent = selectedFruits[1];
-                            reel3.textContent = selectedFruits[2];
-                            
-                            // 處理結果
-                            if (isWin) {
-                                messageDisplay.textContent = '恭喜！您中獎了！';
-                                
-                                // 播放中獎音效
-                                winSound.currentTime = 0;
-                                winSound.play();
-                                
-                                // 創建彩色紙屑
-                                createConfetti();
-                                
-                                // 顯示中獎彈窗
-                                setTimeout(() => {
-                                    winPopup.classList.add('active');
-                                }, 1000);
-                            } else {
-                                messageDisplay.textContent = '很抱歉，請再試一次！';
-                            }
-                            
-                            // 更新統計
-                            gameState.winRate = (gameState.wins / gameState.totalSpins) * 100;
-                            updateStatsDisplay();
-                            saveStats();
-                            
-                            // 標記今天已經玩過
-                            localStorage.setItem('lastPlayed', new Date().toDateString());
-                            
-                            // 重置狀態
-                            spinButton.disabled = true; // 每天只能玩一次
-                            gameState.isSpinning = false;
-                        }
-                    }, intervalTime * 2); // 減速
-                }
-            }, intervalTime);
-        }
-        
-        // 事件監聽
-        spinButton.addEventListener('click', spin);
-        closeWinPopup.addEventListener('click', () => {
-            winPopup.classList.remove('active');
-        });
-        claimPrize.addEventListener('click', () => {
-            alert('已通知客服人員！請稍後將有專人與您聯繫。');
-            winPopup.classList.remove('active');
-        });
-        
-        // 初始化遊戲
-        initGame();
-    </script>
+  <div class="slot-machine">
+    <div class="slot" id="slot1">🍔</div>
+    <div class="slot" id="slot2">🍟</div>
+    <div class="slot" id="slot3">🍩</div>
+  </div>
+
+  <button class="spin-btn" onclick="spin()">旋轉！</button>
+  <div id="result"></div>
+
+  <script>
+    const icons = ["🍔", "🌭", "🍟", "🍩", "🍕", "🥓", "🥪", "🍗", "🍖", "🌮", "🌯", "🥙", "🍙", "🍚", "🍛", "🍜", "🍝", "🍞", "🧀", "🥚"];
+    const jackpotIcon = "🥜"; // 特殊波士頓花生奶油堡標誌
+    const jackpotChance = 0.02; // 2% 中獎率
+
+    function spin() {
+      const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+      const resultDisplay = document.getElementById('result');
+
+      // 重設樣式
+      resultDisplay.textContent = '';
+      resultDisplay.style.color = '#2d3436';
+
+      // 計算是否中獎（2% 機率）
+      if (Math.random() < jackpotChance) {
+        slots.forEach(slot => slot.textContent = jackpotIcon);
+        resultDisplay.innerHTML = "🎉 恭喜中獎！請出示此畫面兌換 <strong>波士頓花生奶油堡</strong> 🎁";
+        resultDisplay.style.color = '#d63031';
+        return;
+      }
+
+      // 否則亂數轉動三個圖示
+      let values = [];
+      for (let i = 0; i < 3; i++) {
+        const icon = icons[Math.floor(Math.random() * icons.length)];
+        slots[i].textContent = icon;
+        values.push(icon);
+      }
+
+      if (values[0] === values[1] && values[1] === values[2]) {
+        resultDisplay.innerHTML = "⭐️ 三個一樣！不過不是花生堡喔，下次加油！";
+      } else {
+        resultDisplay.innerHTML = "😅 沒中喔～再玩一次吧！";
+      }
+    }
+  </script>
+
 </body>
 </html>
