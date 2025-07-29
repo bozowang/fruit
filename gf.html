@@ -5,28 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>吃角子老虎機 - 波士頓花生奶油堡</title>
   <style>
-    /* 省略：同你之前的 CSS，保持美觀和響應式 */
+    body {
+      font-family: "微軟正黑體", sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+      background: #fff8e1;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label, input, button {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+    }
+    input {
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px;
+      background: #ff9800;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:disabled {
+      background: #ddd;
+      cursor: not-allowed;
+    }
+    #message {
+      margin-top: 10px;
+      min-height: 1.5rem;
+      font-weight: bold;
+      color: #e65100;
+    }
+    #gameArea {
+      margin-top: 30px;
+      text-align: center;
+    }
+    #slots {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      letter-spacing: 15px;
+      user-select: none;
+    }
+    #result {
+      font-size: 1.3rem;
+      margin: 15px 0;
+      min-height: 1.5rem;
+    }
+    #playCount, #countdown {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div>
-    <h1>吃角子老虎機 - 波士頓花生奶油堡</h1>
-    <label>請輸入遊戲代碼 (姓名末兩字+三碼數字)：</label>
-    <input id="codeInput" maxlength="5" placeholder="例如：阿明899" />
-    <button id="checkBtn">驗證代碼</button>
-    <p id="message"></p>
-    
-    <div id="gameArea" style="display:none;">
-      <div id="slots" style="font-size: 4rem; margin: 20px 0;">🍔 🍟 🍩</div>
-      <button id="spinBtn">旋轉拉桿！</button>
-      <p id="result"></p>
-      <p>今日遊玩次數：<span id="playCount">0/1</span></p>
-      <p>下次可玩時間：<span id="countdown">00:00:00</span></p>
-    </div>
+  <h1>吃角子老虎機 - 波士頓花生奶油堡</h1>
+
+  <label for="codeInput">請輸入遊戲代碼 (姓名末兩字+三碼數字)：</label>
+  <input id="codeInput" maxlength="5" placeholder="例如：阿明899" autocomplete="off" />
+  <button id="checkBtn">驗證代碼</button>
+  <p id="message"></p>
+
+  <div id="gameArea" style="display:none;">
+    <div id="slots">🍔 🍟 🍩</div>
+    <button id="spinBtn" disabled>旋轉拉桿！</button>
+    <p id="result"></p>
+    <p>今日遊玩次數：<span id="playCount">0/1</span></p>
+    <p>下次可玩時間：<span id="countdown">00:00:00</span></p>
   </div>
 
 <script>
-  const scriptURL = 'https://script.google.com/macros/s/你的GAS代碼/exec'; // 請換成你的部署網址
+  // TODO: 這裡請換成你的 GAS 網址（已公開部署的 exec 網址）
+  const scriptURL = 'https://script.google.com/macros/s/你的GAS代碼/exec';
 
   const codeInput = document.getElementById('codeInput');
   const checkBtn = document.getElementById('checkBtn');
@@ -44,7 +103,7 @@
   const icons = ["🍔", "🌭", "🍟", "🍩", "🍕", "🥓", "🥪", "🍗", "🍖", "🌮", "🌯", "🥙", "🍙"];
   const jackpotChance = 0.02; // 2%
 
-  // 格式驗證：兩個中文字 + 三碼數字
+  // 驗證格式：兩個中文字 + 三碼數字
   function validateCode(code) {
     return /^[\u4e00-\u9fa5]{2}\d{3}$/.test(code);
   }
@@ -58,6 +117,7 @@
     message.textContent = '驗證中...';
     try {
       const res = await fetch(`${scriptURL}?action=check&code=${encodeURIComponent(code)}`);
+      if(!res.ok) throw new Error('網路錯誤');
       const data = await res.json();
       if (data.status === 'OK') {
         playerCode = code;
@@ -81,11 +141,14 @@
       const formData = new FormData();
       formData.append('action', 'record');
       formData.append('code', playerCode);
-      formData.append('ip', 'unknown'); // 無法從前端取得IP，留空或用GAS自動記錄
       formData.append('win', win ? '是' : '否');
       formData.append('prize', prize);
+      // 這裡 IP 無法前端取得，GAS 端可改用 e.ip 或類似方式記錄
 
-      const res = await fetch(scriptURL, { method: 'POST', body: formData });
+      const res = await fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      });
       const data = await res.json();
       if(data.status === 'recorded') {
         console.log('紀錄成功');
@@ -96,7 +159,6 @@
   }
 
   function updatePlayStatus() {
-    // 預設限制每天一次遊戲，並以 localStorage 控制前端體驗
     const today = new Date().toISOString().slice(0,10);
     const lastPlayDate = localStorage.getItem('lastPlayDate');
     let playCount = parseInt(localStorage.getItem('playCount') || '0', 10);
@@ -143,14 +205,14 @@
 
     spinBtn.disabled = true;
     result.textContent = '轉動中...';
-    let spinCount = 0;
 
+    let spinCount = 0;
     const intervalId = setInterval(() => {
       slots.textContent = `${icons[randomIndex()]} ${icons[randomIndex()]} ${icons[randomIndex()]}`;
       spinCount++;
       if (spinCount > 15) {
         clearInterval(intervalId);
-        // 判斷是否中獎
+
         const isJackpot = Math.random() < jackpotChance;
         if (isJackpot) {
           slots.textContent = `${jackpotIcon} ${jackpotIcon} ${jackpotIcon}`;
@@ -169,6 +231,7 @@
         updatePlayStatus();
       }
     }, 100);
+
   }
 
   function randomIndex() {
