@@ -2,72 +2,994 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>活動驗證系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吃角子老虎機 - 贏取波士頓花生奶油堡！</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: sans-serif;
-      padding: 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      padding: 30px;
+      position: relative;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      color: #ff9f1a;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      animation: pulse 2s infinite;
+    }
+    
+    h1 {
+      color: #ff6b6b;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #ff6b6b;
+      margin: 20px 0 15px;
       text-align: center;
     }
-    input, button {
-      padding: 10px;
-      font-size: 18px;
+    
+    .subtitle {
+      color: #2d3436;
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    
+    .jackpot-info {
+      background: linear-gradient(to right, #ff9f1a, #ff6b6b);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin: 15px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .section {
+      display: none;
+    }
+    
+    .section.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus {
+      border-color: #ff9f1a;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 159, 26, 0.2);
+    }
+    
+    button {
+      background: linear-gradient(to right, #ff9f1a, #ff6b6b);
+      color: white;
+      border: none;
+      padding: 14px 25px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .example {
+      background: #f8f9fa;
+      border-left: 4px solid #ff9f1a;
+      padding: 12px 15px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      margin: 40px 0;
+      position: relative;
+    }
+    
+    .slot-wrapper {
+      position: relative;
+      margin: 0 15px;
+    }
+    
+    .slot {
+      width: 120px;
+      height: 120px;
+      border: 6px solid #ff9f1a;
+      border-radius: 15px;
+      font-size: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slot::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 2;
+    }
+    
+    .slot::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 2;
+    }
+    
+    .lever {
+      position: absolute;
+      right: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 80px;
+      background: #ff6b6b;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    
+    .lever:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+    
+    .lever.pulled {
+      transform: translateY(-50%) rotate(-30deg);
+    }
+    
+    .controls {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .spin-btn {
+      background: linear-gradient(to right, #ff9f1a, #ff6b6b);
+      color: white;
+      border: none;
+      padding: 18px 50px;
+      font-size: 1.4rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    
+    .spin-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 107, 107, 0.5);
+    }
+    
+    .spin-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #result {
+      font-size: 1.8rem;
+      color: #2d3436;
+      margin: 30px 0;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px dashed #ff9f1a;
+      transition: all 0.5s ease;
+      text-align: center;
+    }
+    
+    .jackpot {
+      background: linear-gradient(45deg, #ffd700, #ff9f1a);
+      color: #8b0000;
+      font-weight: bold;
+      animation: jackpot 1s infinite alternate;
+    }
+    
+    .info-panel {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .info-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ff6b6b;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    
+    .info-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .info-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    
+    .info-box h3 {
+      color: #ff9f1a;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .counter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+    
+    .counter-box {
+      background: #ff9f1a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      min-width: 80px;
+      text-align: center;
+    }
+    
+    .counter-title {
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .counter-value {
+      font-size: 1.4rem;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #6c757d;
+      font-size: 0.9rem;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .winner-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .winner-modal.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 90%;
+      width: 500px;
+      position: relative;
+      transform: scale(0.8);
+      transition: transform 0.3s ease;
+    }
+    
+    .winner-modal.show .modal-content {
+      transform: scale(1);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #777;
+    }
+    
+    .modal-icon {
+      font-size: 5rem;
+      color: gold;
+      margin-bottom: 20px;
+      animation: pulse 1s infinite;
+    }
+    
+    .modal-title {
+      font-size: 2.5rem;
+      color: #d63031;
+      margin-bottom: 20px;
+    }
+    
+    .modal-text {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .player-info {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+    
+    .player-name {
+      font-weight: bold;
+      color: #ff6b6b;
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: #d32f2f;
+      border: 1px solid #ffcdd2;
+    }
+    
+    .success {
+      background-color: #e8f5e9;
+      color: #388e3c;
+      border: 1px solid #c8e6c9;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes jackpot {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+    
+    @keyframes spin {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    
+    .slot.spinning::before {
+      animation: spin 0.1s infinite linear;
+    }
+    
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .slot {
+        width: 90px;
+        height: 90px;
+        font-size: 50px;
+      }
+      
+      .lever {
+        right: -40px;
+        width: 40px;
+        height: 60px;
+      }
+      
+      .info-content {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .modal-content {
+        padding: 20px;
+      }
+      
+      .modal-title {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .slot {
+        width: 70px;
+        height: 70px;
+        font-size: 40px;
+        margin: 0 5px;
+      }
+      
+      .lever {
+        right: -30px;
+        width: 30px;
+        height: 50px;
+      }
+      
+      .spin-btn {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+      }
+      
+      #result {
+        font-size: 1.4rem;
+      }
+      
+      .counter {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .input-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h1>輸入驗證代碼參加活動</h1>
-  <input type="text" id="codeInput" placeholder="請輸入您的代碼">
-  <button onclick="submitCode()">送出</button>
-
-  <p id="result"></p>
+  <div class="container">
+    <header>
+      <div class="logo">🎰</div>
+      <h1>吃角子老虎機｜贏取波士頓花生奶油堡！</h1>
+      <p class="subtitle">每日限玩一次！轉出三個相同圖案，即可贏得我們招牌的波士頓花生奶油堡！</p>
+      <div class="jackpot-info">
+        <i class="fas fa-trophy"></i>
+        <span>每日大獎：波士頓花生奶油堡</span>
+      </div>
+    </header>
+    
+    <!-- 輸入表單部分 -->
+    <div id="form-section" class="section active">
+      <h2>請輸入您的遊戲代碼</h2>
+      <p class="subtitle">格式：姓名末兩字 + 三碼數字（例如：阿明899）</p>
+      
+      <div class="form-group">
+        <label for="player-code">遊戲代碼：</label>
+        <div class="input-group">
+          <input type="text" id="player-code" placeholder="阿明899" maxlength="5">
+          <button id="verify-btn">驗證代碼</button>
+        </div>
+        <div class="example">範例：小美123、大華456、志明789</div>
+      </div>
+      
+      <div id="message" class="message"></div>
+      
+      <div class="info-panel">
+        <div class="info-title">
+          <i class="fas fa-info-circle"></i>
+          <h2>遊戲規則與說明</h2>
+        </div>
+        <div class="info-content">
+          <div class="info-box">
+            <h3>遊戲規則</h3>
+            <p>• 每個帳戶每天限玩一次</p>
+            <p>• 轉出三個相同圖案即為中獎</p>
+            <p>• 中獎後請出示此畫面兌換獎品</p>
+          </div>
+          <div class="info-box">
+            <h3>獎品說明</h3>
+            <p>• 波士頓花生奶油堡一份</p>
+            <p>• 兌換期限：中獎後7日內</p>
+            <p>• 本活動最終解釋權歸主辦方所有</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 遊戲部分 -->
+    <div id="game-section" class="section">
+      <div class="player-info">
+        玩家：<span class="player-name" id="player-name">未設定</span>
+      </div>
+      
+      <div class="slot-machine">
+        <div class="slot-wrapper">
+          <div class="slot" id="slot1">🍔</div>
+        </div>
+        <div class="slot-wrapper">
+          <div class="slot" id="slot2">🍟</div>
+        </div>
+        <div class="slot-wrapper">
+          <div class="slot" id="slot3">🍩</div>
+        </div>
+        <div class="lever" id="lever"></div>
+      </div>
+      
+      <div class="counter">
+        <div class="counter-box">
+          <div class="counter-title">今日遊玩次數</div>
+          <div class="counter-value" id="play-count">0/1</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-title">下次可玩時間</div>
+          <div class="counter-value" id="countdown">00:00:00</div>
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button class="spin-btn" id="spin-btn">旋轉拉桿！</button>
+      </div>
+      
+      <div id="result">
+        點擊旋轉按鈕開始遊戲！
+      </div>
+      
+      <div class="info-panel">
+        <div class="info-title">
+          <i class="fas fa-info-circle"></i>
+          <h2>遊戲結果說明</h2>
+        </div>
+        <div class="info-content">
+          <div class="info-box">
+            <h3>中獎結果</h3>
+            <p>• 三個🥜：波士頓花生奶油堡</p>
+            <p>• 三個相同圖案：小獎品</p>
+            <p>• 其他：明天再試試手氣</p>
+          </div>
+          <div class="info-box">
+            <h3>注意事項</h3>
+            <p>• 每日限玩一次</p>
+            <p>• 中獎後請出示此畫面</p>
+            <p>• 本遊戲僅供娛樂</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>© 2023 波士頓花生奶油堡專賣店 | 每日限玩一次 | 遊戲記錄將保存至Google Sheet</p>
+    </footer>
+  </div>
+  
+  <!-- 中獎彈出視窗 -->
+  <div class="winner-modal" id="winner-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-icon">🥜</div>
+      <h2 class="modal-title">恭喜中獎！</h2>
+      <p class="modal-text">玩家 <span class="player-name" id="winner-name"></span></p>
+      <p class="modal-text">您贏得了<span class="highlight">波士頓花生奶油堡</span>一份！</p>
+      <p class="modal-text">請出示此畫面給店員兌換獎品</p>
+      <p class="modal-text">中獎記錄已保存至系統</p>
+    </div>
+  </div>
 
   <script>
-    const apiURL = "https://script.google.com/macros/s/AKfycbxAdIE39nfsZSLWUNQ67NGPAX7Fuqpm_-qpQ28jmuZiFOApkeHbrqqaereQnVr2zZvU/exec";
-
-    async function getIP() {
-      try {
-        const res = await fetch("https://api.ipify.org?format=json");
-        const data = await res.json();
-        return data.ip;
-      } catch (err) {
-        return "unknown";
-      }
+    const icons = ["🍔", "🌭", "🍟", "🍩", "🍕", "🥓", "🥪", "🍗", "🍖", "🌮", "🌯", "🥙", "🍙"];
+    const jackpotIcon = "🥜";
+    const jackpotChance = 0.02; // 2% 中獎率
+    
+    // 獲取DOM元素
+    const formSection = document.getElementById('form-section');
+    const gameSection = document.getElementById('game-section');
+    const playerCodeInput = document.getElementById('player-code');
+    const verifyBtn = document.getElementById('verify-btn');
+    const messageDiv = document.getElementById('message');
+    const playerNameSpan = document.getElementById('player-name');
+    const slot1 = document.getElementById('slot1');
+    const slot2 = document.getElementById('slot2');
+    const slot3 = document.getElementById('slot3');
+    const lever = document.getElementById('lever');
+    const spinBtn = document.getElementById('spin-btn');
+    const resultDisplay = document.getElementById('result');
+    const playCountDisplay = document.getElementById('play-count');
+    const countdownDisplay = document.getElementById('countdown');
+    const winnerModal = document.getElementById('winner-modal');
+    const modalClose = document.getElementById('modal-close');
+    const winnerNameSpan = document.getElementById('winner-name');
+    
+    // 初始化遊戲狀態
+    let canPlay = true;
+    let countdownInterval = null;
+    let playerCode = "";
+    let playerName = "";
+    
+    // Google Apps Script URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbySRS6uLQrLUmFsY4FPdcYVE6lufj2MwWVhmfQmbm3OwWny7h-6XkIlljm7GHZdb4yp/exec';
+    
+    // 切換頁面顯示
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
     }
-
-    async function submitCode() {
-      const code = document.getElementById("codeInput").value.trim();
-      const result = document.getElementById("result");
+    
+    // 驗證玩家代碼格式
+    function validatePlayerCode(code) {
+      // 格式：兩個中文字 + 三個數字
+      const regex = /^[\u4e00-\u9fa5]{2}\d{3}$/;
+      return regex.test(code);
+    }
+    
+    // 檢查玩家是否可以玩遊戲
+    async function checkPlayerEligibility() {
+      const code = playerCodeInput.value.trim();
       
-      if (!code) {
-        result.textContent = "請先輸入代碼。";
+      // 驗證格式
+      if (!validatePlayerCode(code)) {
+        messageDiv.textContent = "❌ 格式錯誤！請輸入姓名末兩字 + 三碼數字（例如：阿明899）";
+        messageDiv.className = "message error";
         return;
       }
-
-      result.textContent = "驗證中，請稍候...";
-
-      const ip = await getIP();
-
-      const url = `${apiURL}?code=${encodeURIComponent(code)}&ip=${encodeURIComponent(ip)}`;
       
       try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.status === "OK") {
-          result.textContent = "✅ 驗證成功，您可以參加活動！";
-        } else if (data.status === "repeat") {
-          result.textContent = "⚠️ 您今天已參加過活動囉～";
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = "驗證中...";
+        messageDiv.textContent = "⌛ 正在驗證代碼，請稍候...";
+        messageDiv.className = "message";
+        
+        // 發送請求到Google Apps Script
+        const response = await fetch(`${scriptURL}?action=check&code=${encodeURIComponent(code)}`);
+        const result = await response.json();
+        
+        if (result.status === 'OK') {
+          // 驗證成功
+          playerCode = code;
+          playerName = code.substring(0, 2); // 提取玩家姓名
+          playerNameSpan.textContent = playerName;
+          
+          // 顯示遊戲界面
+          showSection('game-section');
+          
+          // 初始化遊戲狀態
+          checkGameStatus();
+        } else if (result.status === 'fail') {
+          messageDiv.textContent = "❌ " + result.message;
+          messageDiv.className = "message error";
         } else {
-          result.textContent = "❌ 錯誤：" + (data.message || "未知錯誤");
+          messageDiv.textContent = "❌ 發生錯誤，請稍後再試";
+          messageDiv.className = "message error";
         }
-
-      } catch (err) {
-        result.textContent = "❌ 無法連線到伺服器，請稍後再試。";
+      } catch (error) {
+        console.error('驗證錯誤:', error);
+        messageDiv.textContent = "❌ 連線錯誤，請檢查網路後重試";
+        messageDiv.className = "message error";
+      } finally {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = "驗證代碼";
       }
     }
+    
+    // 檢查遊戲狀態
+    function checkGameStatus() {
+      const today = new Date().toLocaleDateString();
+      const lastPlayDate = localStorage.getItem('lastPlayDate');
+      const playCount = localStorage.getItem('playCount') || 0;
+      
+      playCountDisplay.textContent = `${playCount}/1`;
+      
+      if (lastPlayDate === today && playCount >= 1) {
+        canPlay = false;
+        spinBtn.disabled = true;
+        spinBtn.textContent = "今日已玩過";
+        startCountdown();
+      } else {
+        countdownDisplay.textContent = "00:00:00";
+      }
+    }
+    
+    // 開始倒計時到下一天
+    function startCountdown() {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      // 清除之前的計時器
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      
+      const updateCountdown = () => {
+        const now = new Date();
+        const diff = tomorrow - now;
+        
+        if (diff <= 0) {
+          resetGame();
+          return;
+        }
+        
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        countdownDisplay.textContent = 
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      };
+      
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+    
+    // 重置遊戲狀態
+    function resetGame() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      localStorage.setItem('playCount', '0');
+      playCountDisplay.textContent = "0/1";
+      spinBtn.disabled = false;
+      spinBtn.textContent = "旋轉拉桿！";
+      canPlay = true;
+      countdownDisplay.textContent = "00:00:00";
+    }
+    
+    // 提交遊戲記錄到Google Sheet
+    function submitGameRecord(isWin) {
+      const now = new Date();
+      const formData = new FormData();
+      
+      formData.append('action', 'record');
+      formData.append('code', playerCode);
+      formData.append('result', isWin ? '中獎！波士頓花生奶油堡' : '未中獎');
+      
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log('遊戲記錄提交成功');
+        } else {
+          console.error('遊戲記錄提交失敗:', response.status);
+        }
+      })
+      .catch(error => {
+        console.error('提交錯誤:', error);
+      });
+    }
+    
+    // 旋轉老虎機
+    function spin() {
+      if (!canPlay) return;
+      
+      const today = new Date().toLocaleDateString();
+      const lastPlayDate = localStorage.getItem('lastPlayDate');
+      
+      // 如果是新的一天，重置遊戲次數
+      if (lastPlayDate !== today) {
+        localStorage.setItem('playCount', '0');
+      }
+      
+      // 更新遊戲次數
+      const playCount = parseInt(localStorage.getItem('playCount') || 0);
+      localStorage.setItem('playCount', (playCount + 1).toString());
+      localStorage.setItem('lastPlayDate', today);
+      
+      playCountDisplay.textContent = `1/1`;
+      
+      // 禁用按鈕並開始動畫
+      spinBtn.disabled = true;
+      lever.classList.add('pulled');
+      
+      // 重設結果顯示
+      resultDisplay.textContent = '';
+      resultDisplay.classList.remove('jackpot');
+      
+      // 添加旋轉動畫
+      slot1.classList.add('spinning');
+      slot2.classList.add('spinning');
+      slot3.classList.add('spinning');
+      
+      // 計算是否中獎
+      const isJackpot = Math.random() < jackpotChance;
+      
+      // 模擬旋轉過程
+      let spins = 0;
+      const spinInterval = setInterval(() => {
+        slot1.textContent = icons[Math.floor(Math.random() * icons.length)];
+        slot2.textContent = icons[Math.floor(Math.random() * icons.length)];
+        slot3.textContent = icons[Math.floor(Math.random() * icons.length)];
+        
+        spins++;
+        
+        if (spins > 15) {
+          clearInterval(spinInterval);
+          
+          // 停止動畫並顯示結果
+          slot1.classList.remove('spinning');
+          slot2.classList.remove('spinning');
+          slot3.classList.remove('spinning');
+          
+          // 生成結果
+          let values = [];
+          
+          if (isJackpot) {
+            // 中獎結果
+            values = [jackpotIcon, jackpotIcon, jackpotIcon];
+            slot1.textContent = jackpotIcon;
+            slot2.textContent = jackpotIcon;
+            slot3.textContent = jackpotIcon;
+            
+            resultDisplay.innerHTML = "🎉 恭喜中獎！請出示此畫面兌換 <strong>波士頓花生奶油堡</strong> 🎁";
+            resultDisplay.classList.add('jackpot');
+            
+            // 顯示中獎彈出視窗
+            winnerNameSpan.textContent = playerName;
+            winnerModal.classList.add('show');
+            
+            // 提交中獎記錄
+            submitGameRecord(true);
+          } else {
+            // 隨機顯示三個圖示
+            values = [
+              icons[Math.floor(Math.random() * icons.length)],
+              icons[Math.floor(Math.random() * icons.length)],
+              icons[Math.floor(Math.random() * icons.length)]
+            ];
+            
+            slot1.textContent = values[0];
+            slot2.textContent = values[1];
+            slot3.textContent = values[2];
+            
+            // 檢查是否三個相同（非花生）
+            if (values[0] === values[1] && values[1] === values[2]) {
+              resultDisplay.innerHTML = "⭐️ 三個一樣！您贏得了小獎品！";
+              // 提交小獎記錄
+              submitGameRecord(false);
+            } else {
+              resultDisplay.innerHTML = "😅 沒中喔～明天再來試試手氣！";
+            }
+          }
+          
+          // 更新按鈕狀態
+          spinBtn.textContent = "今日已玩過";
+          canPlay = false;
+          startCountdown();
+        }
+      }, 100);
+    }
+    
+    // 事件監聽
+    verifyBtn.addEventListener('click', checkPlayerEligibility);
+    playerCodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkPlayerEligibility();
+      }
+    });
+    
+    spinBtn.addEventListener('click', spin);
+    lever.addEventListener('click', spin);
+    modalClose.addEventListener('click', () => {
+      winnerModal.classList.remove('show');
+    });
+    
+    // 頁面加載時初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 檢查是否有保存的玩家信息
+      const savedPlayerCode = localStorage.getItem('playerCode');
+      if (savedPlayerCode) {
+        playerCode = savedPlayerCode;
+        playerName = savedPlayerCode.substring(0, 2);
+        playerNameSpan.textContent = playerName;
+        playerCodeInput.value = savedPlayerCode;
+        showSection('game-section');
+        checkGameStatus();
+      }
+    });
   </script>
-
 </body>
 </html>
