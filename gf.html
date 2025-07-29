@@ -1,98 +1,73 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>吃角子老虎機 - 波士頓花生奶油堡</title>
+  <meta charset="UTF-8">
+  <title>活動驗證系統</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
+      padding: 40px;
       text-align: center;
-      background-color: #fff8e1;
-      padding: 30px;
-    }
-    h1 {
-      color: #d84315;
-    }
-    #slot {
-      font-size: 50px;
-      margin: 20px 0;
     }
     input, button {
+      padding: 10px;
       font-size: 18px;
-      padding: 8px;
-      margin: 5px;
-    }
-    .hidden {
-      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>吃角子老虎機</h1>
-  <p>輸入「姓名末兩字 + 三碼數字」驗證，例如：<strong>阿明899</strong></p>
 
-  <input type="text" id="userCode" placeholder="例如：阿明899" />
-  <button onclick="checkEligibility()">驗證開始</button>
+  <h1>輸入驗證代碼參加活動</h1>
+  <input type="text" id="codeInput" placeholder="請輸入您的代碼">
+  <button onclick="submitCode()">送出</button>
 
-  <div id="slotSection" class="hidden">
-    <div id="slot">🍔🍟🍦</div>
-    <button onclick="spin()">🎰 開始遊戲</button>
-    <p id="result"></p>
-  </div>
-
-  <p id="status"></p>
+  <p id="result"></p>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbySRS6uLQrLUmFsY4FPdcYVE6lufj2MwWVhmfQmbm3OwWny7h-6XkIlljm7GHZdb4yp/exec';
-    let userCode = '';
+    const apiURL = "https://script.google.com/macros/s/AKfycbxAdIE39nfsZSLWUNQ67NGPAX7Fuqpm_-qpQ28jmuZiFOApkeHbrqqaereQnVr2zZvU/exec";
 
-    function checkEligibility() {
-      const input = document.getElementById('userCode').value.trim();
-      if (!/^[\u4e00-\u9fa5]{2}[0-9]{3}$/.test(input)) {
-        alert('請輸入正確格式：姓名末兩字 + 三碼數字');
+    async function getIP() {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const data = await res.json();
+        return data.ip;
+      } catch (err) {
+        return "unknown";
+      }
+    }
+
+    async function submitCode() {
+      const code = document.getElementById("codeInput").value.trim();
+      const result = document.getElementById("result");
+      
+      if (!code) {
+        result.textContent = "請先輸入代碼。";
         return;
       }
-      userCode = input;
 
-      document.getElementById('status').innerText = '驗證中...';
+      result.textContent = "驗證中，請稍候...";
 
-      fetch(`${scriptURL}?action=check&code=${encodeURIComponent(userCode)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 'OK') {
-            document.getElementById('status').innerText = '驗證成功！開始遊戲吧！';
-            document.getElementById('slotSection').classList.remove('hidden');
-          } else {
-            document.getElementById('status').innerText = data.message;
-          }
-        })
-        .catch(() => {
-          document.getElementById('status').innerText = '發生錯誤，請稍後再試。';
-        });
-    }
+      const ip = await getIP();
 
-    function spin() {
-      const items = ['🍔', '🍟', '🍦', '🌭', '🥓', '🍕', '🍗'];
-      const slot = document.getElementById('slot');
-      let result = [];
+      const url = `${apiURL}?code=${encodeURIComponent(code)}&ip=${encodeURIComponent(ip)}`;
+      
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-      for (let i = 0; i < 3; i++) {
-        const icon = items[Math.floor(Math.random() * items.length)];
-        result.push(icon);
+        if (data.status === "OK") {
+          result.textContent = "✅ 驗證成功，您可以參加活動！";
+        } else if (data.status === "repeat") {
+          result.textContent = "⚠️ 您今天已參加過活動囉～";
+        } else {
+          result.textContent = "❌ 錯誤：" + (data.message || "未知錯誤");
+        }
+
+      } catch (err) {
+        result.textContent = "❌ 無法連線到伺服器，請稍後再試。";
       }
-
-      slot.innerText = result.join('');
-
-      if (result[0] === result[1] && result[1] === result[2]) {
-        document.getElementById('result').innerText = '🎉 恭喜中獎！波士頓花生奶油堡 🎉';
-      } else {
-        document.getElementById('result').innerText = '再接再厲～';
-      }
-
-      // 登記已玩
-      fetch(`${scriptURL}?action=record&code=${encodeURIComponent(userCode)}`);
     }
   </script>
+
 </body>
 </html>
