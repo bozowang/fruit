@@ -340,8 +340,8 @@
   </div>
 
   <script>
-    // 使用您提供的部署ID
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwQ9m2z_RqtLvWAjV_QpRFz8BukZVg7_GW1FeIYeHKjimIoeazWgS0bBCD5UeXiFX0/exec';
+    // 部署後替換為你的Google Apps Script Web應用URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwQFI97q7PCCQkysQ9yR8Rnm0zD4y2Iov80h07iSdzz29ioSGtZUgHSUat7DIRA9g/exec';
     // DOM元素
     const codeInput = document.getElementById('codeInput');
     const checkBtn = document.getElementById('checkBtn');
@@ -388,7 +388,19 @@
       showMessage('驗證中...', 'info');
       
       try {
-        const response = await fetch(`${scriptURL}?action=check&code=${encodeURIComponent(code)}`);
+        const recordData = {
+          action: 'check',
+          code: code
+        };
+
+        const response = await fetch(scriptURL, { 
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(recordData)
+        });
+        
         const data = await response.json();
         
         if (data.status === 'OK') {
@@ -412,20 +424,25 @@
     // 提交遊戲記錄
     async function submitRecord(isWin, prize) {
       try {
-        const formData = new FormData();
-        formData.append('action', 'record');
-        formData.append('code', playerCode);
-        formData.append('win', isWin ? '是' : '否');
-        formData.append('prize', prize);
+        const recordData = {
+          action: 'record',
+          code: playerCode,
+          win: isWin ? '是' : '否',
+          prize: prize,
+          result: result.textContent // 添加游戏结果描述
+        };
 
         const response = await fetch(scriptURL, { 
           method: 'POST', 
-          body: formData 
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(recordData)
         });
         
         const data = await response.json();
         if (data.status === 'recorded') {
-          console.log('遊戲記錄提交成功');
+          console.log('遊戲記錄提交成功', data.record);
         }
       } catch (error) {
         console.error('提交記錄失敗:', error);
