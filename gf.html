@@ -194,6 +194,7 @@
       background: rgba(255, 255, 255, 0.8);
       border: 2px dashed #ff9f1a;
       transition: all 0.5s ease;
+      text-align: center;
     }
     
     .jackpot {
@@ -275,6 +276,73 @@
       border-top: 1px solid #e9ecef;
     }
     
+    .winner-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .winner-modal.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 90%;
+      width: 500px;
+      position: relative;
+      transform: scale(0.8);
+      transition: transform 0.3s ease;
+    }
+    
+    .winner-modal.show .modal-content {
+      transform: scale(1);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #777;
+    }
+    
+    .modal-icon {
+      font-size: 5rem;
+      color: gold;
+      margin-bottom: 20px;
+      animation: pulse 1s infinite;
+    }
+    
+    .modal-title {
+      font-size: 2.5rem;
+      color: #d63031;
+      margin-bottom: 20px;
+    }
+    
+    .modal-text {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
@@ -316,6 +384,14 @@
       h1 {
         font-size: 2rem;
       }
+      
+      .modal-content {
+        padding: 20px;
+      }
+      
+      .modal-title {
+        font-size: 2rem;
+      }
     }
     
     @media (max-width: 480px) {
@@ -340,6 +416,11 @@
       #result {
         font-size: 1.4rem;
       }
+      
+      .counter {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
   </style>
 </head>
@@ -348,7 +429,7 @@
     <header>
       <div class="logo">🎰</div>
       <h1>吃角子老虎機｜贏取波士頓花生奶油堡！</h1>
-      <p class="subtitle">每日限玩一次！轉出三個花生符號🥜，即可贏得我們招牌的波士頓花生奶油堡！</p>
+      <p class="subtitle">每日限玩一次！轉出三個相同圖案，即可贏得我們招牌的波士頓花生奶油堡！</p>
       <div class="jackpot-info">
         <i class="fas fa-trophy"></i>
         <span>每日大獎：波士頓花生奶油堡</span>
@@ -396,7 +477,7 @@
         <div class="info-box">
           <h3>遊戲規則</h3>
           <p>• 每個帳戶每天限玩一次</p>
-          <p>• 轉出三個🥜符號即為中獎</p>
+          <p>• 轉出三個相同圖案即為中獎</p>
           <p>• 中獎後請出示此畫面兌換獎品</p>
         </div>
         <div class="info-box">
@@ -411,6 +492,18 @@
     <footer>
       <p>© 2023 波士頓花生奶油堡專賣店 | 每日限玩一次 | 中獎記錄將保存至Google Sheet</p>
     </footer>
+  </div>
+  
+  <!-- 中獎彈出視窗 -->
+  <div class="winner-modal" id="winner-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-icon">🥜</div>
+      <h2 class="modal-title">恭喜中獎！</h2>
+      <p class="modal-text">您贏得了<span class="highlight">波士頓花生奶油堡</span>一份！</p>
+      <p class="modal-text">請出示此畫面給店員兌換獎品</p>
+      <p class="modal-text">中獎記錄已保存至系統</p>
+    </div>
   </div>
 
   <script>
@@ -427,10 +520,28 @@
     const resultDisplay = document.getElementById('result');
     const playCountDisplay = document.getElementById('play-count');
     const countdownDisplay = document.getElementById('countdown');
+    const winnerModal = document.getElementById('winner-modal');
+    const modalClose = document.getElementById('modal-close');
     
     // 初始化遊戲狀態
     let canPlay = true;
     let countdownInterval = null;
+    let userIP = "獲取中...";
+    
+    // Google Sheet部署URL - 替換為您的實際URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbySRS6uLQrLUmFsY4FPdcYVE6lufj2MwWVhmfQmbm3OwWny7h-6XkIlljm7GHZdb4yp/exec';
+    
+    // 獲取用戶IP地址
+    async function getUserIP() {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+      } catch (error) {
+        console.error('獲取IP失敗:', error);
+        return "未知IP";
+      }
+    }
     
     // 檢查localStorage中的遊戲記錄
     function checkGameStatus() {
@@ -496,41 +607,40 @@
       countdownDisplay.textContent = "00:00:00";
     }
     
-    // 模擬數據提交到Google Sheet
+    // 提交數據到Google Sheet
     function submitToGoogleSheet(isWin) {
       const now = new Date();
       const timestamp = now.toLocaleString();
-      const userAgent = navigator.userAgent;
       
-      // 這裡應該是實際的Google Apps Script部署URL
-      const scriptURL = 'https://script.google.com/macros/s/你的GoogleScriptID/exec';
-      
-      // 創建表單數據
       const formData = new FormData();
       formData.append('timestamp', timestamp);
-      formData.append('result', isWin ? 'win' : 'lose');
-      formData.append('device', userAgent);
+      formData.append('ip', userIP);
+      formData.append('note', isWin ? '中獎！波士頓花生奶油堡' : '未中獎');
       
-      // 實際部署時需要取消註解以下代碼
-      /*
       fetch(scriptURL, {
         method: 'POST',
         body: formData
       })
-      .then(response => console.log('Success:', response))
-      .catch(error => console.error('Error:', error));
-      */
-      
-      // 模擬成功提交
-      console.log(`提交數據到Google Sheet: 
-        時間: ${timestamp}
-        結果: ${isWin ? '中獎' : '未中獎'}
-        設備: ${userAgent}`);
+      .then(response => {
+        if (response.ok) {
+          console.log('數據提交成功');
+        } else {
+          console.error('數據提交失敗:', response.status);
+        }
+      })
+      .catch(error => {
+        console.error('提交錯誤:', error);
+      });
     }
     
     // 旋轉老虎機
-    function spin() {
+    async function spin() {
       if (!canPlay) return;
+      
+      // 如果還沒獲取IP，現在獲取
+      if (userIP === "獲取中...") {
+        userIP = await getUserIP();
+      }
       
       const today = new Date().toLocaleDateString();
       const lastPlayDate = localStorage.getItem('lastPlayDate');
@@ -561,7 +671,7 @@
       slot3.classList.add('spinning');
       
       // 計算是否中獎
-      const isWin = Math.random() < jackpotChance;
+      const isJackpot = Math.random() < jackpotChance;
       
       // 模擬旋轉過程
       let spins = 0;
@@ -580,7 +690,12 @@
           slot2.classList.remove('spinning');
           slot3.classList.remove('spinning');
           
-          if (isWin) {
+          // 生成結果
+          let values = [];
+          
+          if (isJackpot) {
+            // 中獎結果
+            values = [jackpotIcon, jackpotIcon, jackpotIcon];
             slot1.textContent = jackpotIcon;
             slot2.textContent = jackpotIcon;
             slot3.textContent = jackpotIcon;
@@ -588,11 +703,14 @@
             resultDisplay.innerHTML = "🎉 恭喜中獎！請出示此畫面兌換 <strong>波士頓花生奶油堡</strong> 🎁";
             resultDisplay.classList.add('jackpot');
             
+            // 顯示中獎彈出視窗
+            winnerModal.classList.add('show');
+            
             // 提交中獎數據到Google Sheet
             submitToGoogleSheet(true);
           } else {
             // 隨機顯示三個圖示
-            const values = [
+            values = [
               icons[Math.floor(Math.random() * icons.length)],
               icons[Math.floor(Math.random() * icons.length)],
               icons[Math.floor(Math.random() * icons.length)]
@@ -602,14 +720,14 @@
             slot2.textContent = values[1];
             slot3.textContent = values[2];
             
+            // 檢查是否三個相同（非花生）
             if (values[0] === values[1] && values[1] === values[2]) {
-              resultDisplay.innerHTML = "⭐️ 三個一樣！不過不是花生堡喔，下次加油！";
+              resultDisplay.innerHTML = "⭐️ 三個一樣！您贏得了小獎品！";
+              // 提交小獎數據
+              submitToGoogleSheet(false);
             } else {
               resultDisplay.innerHTML = "😅 沒中喔～明天再來試試手氣！";
             }
-            
-            // 提交未中獎數據到Google Sheet
-            submitToGoogleSheet(false);
           }
           
           // 更新按鈕狀態
@@ -623,15 +741,17 @@
     // 事件監聽
     spinBtn.addEventListener('click', spin);
     lever.addEventListener('click', spin);
+    modalClose.addEventListener('click', () => {
+      winnerModal.classList.remove('show');
+    });
     
     // 初始化遊戲狀態
     checkGameStatus();
     
-    // 頁面加載時顯示一些動畫效果
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        document.querySelector('.logo').style.transform = 'scale(1)';
-      }, 500);
+    // 頁面加載時獲取IP
+    getUserIP().then(ip => {
+      userIP = ip;
+      console.log("用戶IP:", userIP);
     });
   </script>
 </body>
