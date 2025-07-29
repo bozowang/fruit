@@ -254,6 +254,16 @@
       border-radius: 10px;
       font-weight: bold;
       min-width: 80px;
+      text-align: center;
+    }
+    
+    .counter-title {
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .counter-value {
+      font-size: 1.4rem;
     }
     
     footer {
@@ -360,12 +370,12 @@
     
     <div class="counter">
       <div class="counter-box">
-        <div>今日遊玩次數</div>
-        <div id="play-count">0/1</div>
+        <div class="counter-title">今日遊玩次數</div>
+        <div class="counter-value" id="play-count">0/1</div>
       </div>
       <div class="counter-box">
-        <div>剩餘時間</div>
-        <div id="countdown">24:00:00</div>
+        <div class="counter-title">下次可玩時間</div>
+        <div class="counter-value" id="countdown">00:00:00</div>
       </div>
     </div>
     
@@ -420,6 +430,7 @@
     
     // 初始化遊戲狀態
     let canPlay = true;
+    let countdownInterval = null;
     
     // 檢查localStorage中的遊戲記錄
     function checkGameStatus() {
@@ -434,6 +445,8 @@
         spinBtn.disabled = true;
         spinBtn.textContent = "今日已玩過";
         startCountdown();
+      } else {
+        countdownDisplay.textContent = "00:00:00";
       }
     }
     
@@ -443,6 +456,11 @@
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
+      
+      // 清除之前的計時器
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
       
       const updateCountdown = () => {
         const now = new Date();
@@ -457,21 +475,25 @@
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        countdownDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        countdownDisplay.textContent = 
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       };
       
       updateCountdown();
-      setInterval(updateCountdown, 1000);
+      countdownInterval = setInterval(updateCountdown, 1000);
     }
     
     // 重置遊戲狀態
     function resetGame() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
       localStorage.setItem('playCount', '0');
       playCountDisplay.textContent = "0/1";
       spinBtn.disabled = false;
       spinBtn.textContent = "旋轉拉桿！";
       canPlay = true;
-      countdownDisplay.textContent = "24:00:00";
+      countdownDisplay.textContent = "00:00:00";
     }
     
     // 模擬數據提交到Google Sheet
@@ -483,6 +505,7 @@
       // 這裡應該是實際的Google Apps Script部署URL
       const scriptURL = 'https://script.google.com/macros/s/你的GoogleScriptID/exec';
       
+      // 創建表單數據
       const formData = new FormData();
       formData.append('timestamp', timestamp);
       formData.append('result', isWin ? 'win' : 'lose');
@@ -518,7 +541,7 @@
       }
       
       // 更新遊戲次數
-      const playCount = parseInt(localStorage.getItem('playCount') || 0;
+      const playCount = parseInt(localStorage.getItem('playCount') || 0);
       localStorage.setItem('playCount', (playCount + 1).toString());
       localStorage.setItem('lastPlayDate', today);
       
