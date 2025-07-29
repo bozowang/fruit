@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水果吃角子老虎</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #FF512F, #F09819);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .slot-reel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 7rem;
+            height: 9rem;
+            background: white;
+            border: 4px solid #4a90e2;
+            border-radius: 12px;
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0 0.5rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 -4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot-reel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
+            z-index: 10;
+        }
+
+        .slot-reel::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
+            z-index: 10;
+        }
+
+        .reels-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f8f9fa"/><path d="M0 0L100 100M100 0L0 100" stroke="%23e9ecef" stroke-width="1"/></svg>');
+            background-size: 30px 30px;
+            position: relative;
+        }
+
+        .reels-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.9));
+            z-index: 0;
+        }
+
+        .spin-button {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .spin-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .spin-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .spin-button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s;
+            z-index: -1;
+        }
+
+        .spin-button:hover::after {
+            left: 120%;
+        }
+
+        .message-box {
+            min-height: 3rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .prize-display {
+            background: linear-gradient(135deg, #fff9c4, #ffecb3);
+            border: 3px dashed #ff9800;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1565c0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #546e7a;
+        }
+
+        .winning-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .winning-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.5s;
+            max-width: 90%;
+            position: relative;
+        }
+
+        .winning-animation.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .winning-animation.show .winning-content {
+            transform: scale(1);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #f44336;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            top: -10px;
+            opacity: 0;
+        }
+
+        @media (max-width: 640px) {
+            .slot-reel {
+                width: 5rem;
+                height: 7rem;
+                font-size: 3.5rem;
+                margin: 0 0.3rem;
+            }
+            
+            .spin-button {
+                padding: 1rem 2.5rem;
+                font-size: 1.4rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1><i class="fas fa-slot-machine"></i> 水果吃角子老虎</h1>
+        </div>
+        
+        <div class="reels-container">
+            <div id="reel1" class="slot-reel">🍎</div>
+            <div id="reel2" class="slot-reel">🍊</div>
+            <div id="reel3" class="slot-reel">🍌</div>
+        </div>
+        
+        <div class="flex flex-col items-center px-6 pb-8">
+            <button id="spinButton" class="spin-button mb-6">
+                <i class="fas fa-redo-alt mr-2"></i>旋轉！
+            </button>
+            
+            <div id="message" class="message-box text-xl font-semibold text-center text-gray-700 mb-6 w-full">
+                點擊旋轉開始遊戲！
+            </div>
+            
+            <div class="stats-container w-full">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalSpins">0</div>
+                    <div class="stat-label">總旋轉次數</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="wins">0</div>
+                    <div class="stat-label">中獎次數</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="winRate">0%</div>
+                    <div class="stat-label">中獎率</div>
+                </div>
+            </div>
+            
+            <div id="prizeDisplay" class="prize-display hidden w-full">
+                <p class="text-2xl font-bold text-yellow-800 mb-3"><i class="fas fa-trophy mr-2"></i>恭喜您中獎了！</p>
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="波士頓花生奶油堡" class="prize-image mb-3 rounded-xl mx-auto" style="max-height: 150px;">
+                <p class="text-xl text-yellow-700">您贏得了<strong>波士頓花生奶油堡</strong>！</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="winningAnimation" class="winning-animation">
+        <div class="winning-content">
+            <div class="close-button" id="closeWinAnimation">×</div>
+            <h2 class="text-4xl font-bold text-yellow-600 mb-4">恭喜中獎！</h2>
+            <div class="text-2xl mb-6">您贏得了 <span class="font-bold">波士頓花生奶油堡</span></div>
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="大獎" class="rounded-xl mx-auto mb-6" style="max-height: 200px;">
+            <p class="text-xl text-gray-700">請聯繫客服領取您的獎品</p>
+            <button class="mt-6 px-6 py-3 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transition">領取獎品</button>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態變量
+        const gameState = {
+            totalSpins: 0,
+            wins: 0,
+            winRate: 0,
+            isSpinning: false
+        };
+
+        // 獲取HTML元素
+        const reel1 = document.getElementById('reel1');
+        const reel2 = document.getElementById('reel2');
+        const reel3 = document.getElementById('reel3');
+        const spinButton = document.getElementById('spinButton');
+        const messageDisplay = document.getElementById('message');
+        const prizeDisplay = document.getElementById('prizeDisplay');
+        const totalSpinsDisplay = document.getElementById('totalSpins');
+        const winsDisplay = document.getElementById('wins');
+        const winRateDisplay = document.getElementById('winRate');
+        const winningAnimation = document.getElementById('winningAnimation');
+        const closeWinAnimation = document.getElementById('closeWinAnimation');
+
+        // 定義水果
+        const fruits = [
+            '🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🥝', '🥭', '🍒'
+        ];
+
+        // 中獎率 (2%)
+        const WIN_RATE = 2;
+
+        // 更新統計顯示
+        function updateStatsDisplay() {
+            totalSpinsDisplay.textContent = gameState.totalSpins;
+            winsDisplay.textContent = gameState.wins;
+            winRateDisplay.textContent = gameState.winRate.toFixed(1) + '%';
+        }
+
+        // 生成隨機整數
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // 創建彩色紙屑效果
+        function createConfetti() {
+            const container = document.body;
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.opacity = '0';
+                container.appendChild(confetti);
+                
+                // 動畫設置
+                const animation = confetti.animate([
+                    { transform: `translateY(0) rotate(0)`, opacity: 1 },
+                    { transform: `translateY(${100 + Math.random() * 20}vh) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: 3000 + Math.random() * 3000,
+                    easing: 'cubic-bezier(0,0.9,0.57,1)'
+                });
+                
+                // 動畫結束後移除元素
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        // 模擬日誌記錄到Google Sheets
+        function logToGoogleSheet(isWin, selectedFruits) {
+            const timestamp = new Date().toLocaleString();
+            const status = isWin ? 'Win' : 'Loss';
+            const prize = isWin ? '波士頓花生奶油堡' : '無';
+            
+            const logEntry = {
+                timestamp,
+                fruits: selectedFruits.join('-'),
+                status,
+                prize
+            };
+            
+            console.log('模擬發送到Google試算表的資料:', logEntry);
+            
+            // 實際應用中，這裡會發送數據到Google Apps Script
+            // fetch('YOUR_APPS_SCRIPT_WEB_APP_URL', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(logEntry),
+            // });
+        }
+
+        // 處理旋轉
+        function spin() {
+            if (gameState.isSpinning) return;
+            
+            gameState.isSpinning = true;
+            spinButton.disabled = true;
+            messageDisplay.textContent = '旋轉中...';
+            prizeDisplay.classList.add('hidden');
+            winningAnimation.classList.remove('show');
+            
+            // 更新統計
+            gameState.totalSpins++;
+            
+            // 決定是否中獎
+            let selectedFruits = [];
+            const winChance = getRandomInt(1, 100);
+            const isWin = winChance <= WIN_RATE;
+            
+            if (isWin) {
+                // 中獎 - 三個相同水果
+                const winningFruit = fruits[getRandomInt(0, fruits.length - 1)];
+                selectedFruits = [winningFruit, winningFruit, winningFruit];
+                gameState.wins++;
+            } else {
+                // 未中獎 - 確保三個水果不完全相同
+                do {
+                    selectedFruits = [
+                        fruits[getRandomInt(0, fruits.length - 1)],
+                        fruits[getRandomInt(0, fruits.length - 1)],
+                        fruits[getRandomInt(0, fruits.length - 1)]
+                    ];
+                } while (selectedFruits[0] === selectedFruits[1] && selectedFruits[1] === selectedFruits[2]);
+            }
+            
+            // 計算中獎率
+            gameState.winRate = (gameState.wins / gameState.totalSpins) * 100;
+            updateStatsDisplay();
+            
+            // 動畫設置
+            let spinCount = 0;
+            const maxSpins = 40;
+            const intervalTime = 50;
+            
+            // 旋轉動畫
+            const spinInterval = setInterval(() => {
+                reel1.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                reel2.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                reel3.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                
+                spinCount++;
+                
+                // 減速效果
+                if (spinCount > maxSpins * 0.7) {
+                    clearInterval(spinInterval);
+                    const slowInterval = setInterval(() => {
+                        reel1.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                        
+                        if (spinCount > maxSpins * 0.8) {
+                            reel2.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                        }
+                        
+                        if (spinCount > maxSpins * 0.9) {
+                            reel3.textContent = fruits[getRandomInt(0, fruits.length - 1)];
+                        }
+                        
+                        spinCount++;
+                        
+                        if (spinCount >= maxSpins) {
+                            clearInterval(slowInterval);
+                            
+                            // 設置最終結果
+                            reel1.textContent = selectedFruits[0];
+                            reel2.textContent = selectedFruits[1];
+                            reel3.textContent = selectedFruits[2];
+                            
+                            // 處理結果
+                            if (isWin) {
+                                messageDisplay.textContent = '恭喜！您中獎了！';
+                                prizeDisplay.classList.remove('hidden');
+                                createConfetti();
+                                setTimeout(() => {
+                                    winningAnimation.classList.add('show');
+                                }, 1000);
+                            } else {
+                                messageDisplay.textContent = '很抱歉，請再試一次！';
+                                prizeDisplay.classList.add('hidden');
+                            }
+                            
+                            // 記錄結果
+                            logToGoogleSheet(isWin, selectedFruits);
+                            
+                            // 重置狀態
+                            spinButton.disabled = false;
+                            gameState.isSpinning = false;
+                        }
+                    }, intervalTime * 1.5);
+                }
+            }, intervalTime);
+        }
+
+        // 事件監聽
+        spinButton.addEventListener('click', spin);
+        closeWinAnimation.addEventListener('click', () => {
+            winningAnimation.classList.remove('show');
+        });
+
+        // 初始狀態
+        updateStatsDisplay();
+    </script>
+</body>
+</html>
