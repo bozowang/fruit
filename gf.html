@@ -6,103 +6,610 @@
   <title>吃角子老虎機 - 贏取波士頓花生奶油堡！</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f7f1e3;
-      text-align: center;
-      padding: 30px;
-    }
-    h1 {
-      color: #ff6b6b;
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-    .slot-machine {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .slot {
-      width: 100px;
-      height: 100px;
-      margin: 0 10px;
-      border: 4px solid #333;
-      border-radius: 10px;
-      font-size: 60px;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: white;
+      padding: 20px;
+      color: #333;
     }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      padding: 30px;
+      position: relative;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      color: #ff9f1a;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      animation: pulse 2s infinite;
+    }
+    
+    h1 {
+      color: #ff6b6b;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .subtitle {
+      color: #2d3436;
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+    
+    .jackpot-info {
+      background: linear-gradient(to right, #ff9f1a, #ff6b6b);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin: 15px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      margin: 40px 0;
+      position: relative;
+    }
+    
+    .slot-wrapper {
+      position: relative;
+      margin: 0 15px;
+    }
+    
+    .slot {
+      width: 120px;
+      height: 120px;
+      border: 6px solid #ff9f1a;
+      border-radius: 15px;
+      font-size: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slot::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 2;
+    }
+    
+    .slot::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 2;
+    }
+    
+    .lever {
+      position: absolute;
+      right: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 80px;
+      background: #ff6b6b;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    
+    .lever:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+    
+    .lever.pulled {
+      transform: translateY(-50%) rotate(-30deg);
+    }
+    
+    .controls {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
     .spin-btn {
-      background-color: #ff9f1a;
+      background: linear-gradient(to right, #ff9f1a, #ff6b6b);
       color: white;
       border: none;
-      padding: 15px 40px;
-      font-size: 1.2em;
-      border-radius: 12px;
+      padding: 18px 50px;
+      font-size: 1.4rem;
+      border-radius: 50px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+      font-weight: bold;
+      letter-spacing: 1px;
     }
+    
     .spin-btn:hover {
-      background-color: #ff6b6b;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 107, 107, 0.5);
     }
+    
+    .spin-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
     #result {
-      font-size: 1.5em;
+      font-size: 1.8rem;
       color: #2d3436;
+      margin: 30px 0;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px dashed #ff9f1a;
+      transition: all 0.5s ease;
+    }
+    
+    .jackpot {
+      background: linear-gradient(45deg, #ffd700, #ff9f1a);
+      color: #8b0000;
+      font-weight: bold;
+      animation: jackpot 1s infinite alternate;
+    }
+    
+    .info-panel {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .info-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ff6b6b;
+      margin-bottom: 15px;
+    }
+    
+    .info-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .info-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    
+    .info-box h3 {
+      color: #ff9f1a;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .counter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
       margin-top: 20px;
+      font-size: 1.2rem;
+    }
+    
+    .counter-box {
+      background: #ff9f1a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      min-width: 80px;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #6c757d;
+      font-size: 0.9rem;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes jackpot {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+    
+    @keyframes spin {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    
+    .slot.spinning::before {
+      animation: spin 0.1s infinite linear;
+    }
+    
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .slot {
+        width: 90px;
+        height: 90px;
+        font-size: 50px;
+      }
+      
+      .lever {
+        right: -40px;
+        width: 40px;
+        height: 60px;
+      }
+      
+      .info-content {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .slot {
+        width: 70px;
+        height: 70px;
+        font-size: 40px;
+        margin: 0 5px;
+      }
+      
+      .lever {
+        right: -30px;
+        width: 30px;
+        height: 50px;
+      }
+      
+      .spin-btn {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+      }
+      
+      #result {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h1>🎰 吃角子老虎機｜贏取波士頓花生奶油堡！</h1>
-
-  <div class="slot-machine">
-    <div class="slot" id="slot1">🍔</div>
-    <div class="slot" id="slot2">🍟</div>
-    <div class="slot" id="slot3">🍩</div>
+  <div class="container">
+    <header>
+      <div class="logo">🎰</div>
+      <h1>吃角子老虎機｜贏取波士頓花生奶油堡！</h1>
+      <p class="subtitle">每日限玩一次！轉出三個花生符號🥜，即可贏得我們招牌的波士頓花生奶油堡！</p>
+      <div class="jackpot-info">
+        <i class="fas fa-trophy"></i>
+        <span>每日大獎：波士頓花生奶油堡</span>
+      </div>
+    </header>
+    
+    <div class="slot-machine">
+      <div class="slot-wrapper">
+        <div class="slot" id="slot1">🍔</div>
+      </div>
+      <div class="slot-wrapper">
+        <div class="slot" id="slot2">🍟</div>
+      </div>
+      <div class="slot-wrapper">
+        <div class="slot" id="slot3">🍩</div>
+      </div>
+      <div class="lever" id="lever"></div>
+    </div>
+    
+    <div class="counter">
+      <div class="counter-box">
+        <div>今日遊玩次數</div>
+        <div id="play-count">0/1</div>
+      </div>
+      <div class="counter-box">
+        <div>剩餘時間</div>
+        <div id="countdown">24:00:00</div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button class="spin-btn" id="spin-btn">旋轉拉桿！</button>
+    </div>
+    
+    <div id="result">
+      點擊旋轉按鈕開始遊戲！
+    </div>
+    
+    <div class="info-panel">
+      <div class="info-title">
+        <i class="fas fa-info-circle"></i>
+        <h2>遊戲規則與說明</h2>
+      </div>
+      <div class="info-content">
+        <div class="info-box">
+          <h3>遊戲規則</h3>
+          <p>• 每個帳戶每天限玩一次</p>
+          <p>• 轉出三個🥜符號即為中獎</p>
+          <p>• 中獎後請出示此畫面兌換獎品</p>
+        </div>
+        <div class="info-box">
+          <h3>獎品說明</h3>
+          <p>• 波士頓花生奶油堡一份</p>
+          <p>• 兌換期限：中獎後7日內</p>
+          <p>• 本活動最終解釋權歸主辦方所有</p>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>© 2023 波士頓花生奶油堡專賣店 | 每日限玩一次 | 中獎記錄將保存至Google Sheet</p>
+    </footer>
   </div>
 
-  <button class="spin-btn" onclick="spin()">旋轉！</button>
-  <div id="result"></div>
-
   <script>
-    const icons = ["🍔", "🌭", "🍟", "🍩", "🍕", "🥓", "🥪", "🍗", "🍖", "🌮", "🌯", "🥙", "🍙", "🍚", "🍛", "🍜", "🍝", "🍞", "🧀", "🥚"];
-    const jackpotIcon = "🥜"; // 特殊波士頓花生奶油堡標誌
+    const icons = ["🍔", "🌭", "🍟", "🍩", "🍕", "🥓", "🥪", "🍗", "🍖", "🌮", "🌯", "🥙", "🍙"];
+    const jackpotIcon = "🥜";
     const jackpotChance = 0.02; // 2% 中獎率
-
-    function spin() {
-      const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
-      const resultDisplay = document.getElementById('result');
-
-      // 重設樣式
-      resultDisplay.textContent = '';
-      resultDisplay.style.color = '#2d3436';
-
-      // 計算是否中獎（2% 機率）
-      if (Math.random() < jackpotChance) {
-        slots.forEach(slot => slot.textContent = jackpotIcon);
-        resultDisplay.innerHTML = "🎉 恭喜中獎！請出示此畫面兌換 <strong>波士頓花生奶油堡</strong> 🎁";
-        resultDisplay.style.color = '#d63031';
-        return;
-      }
-
-      // 否則亂數轉動三個圖示
-      let values = [];
-      for (let i = 0; i < 3; i++) {
-        const icon = icons[Math.floor(Math.random() * icons.length)];
-        slots[i].textContent = icon;
-        values.push(icon);
-      }
-
-      if (values[0] === values[1] && values[1] === values[2]) {
-        resultDisplay.innerHTML = "⭐️ 三個一樣！不過不是花生堡喔，下次加油！";
-      } else {
-        resultDisplay.innerHTML = "😅 沒中喔～再玩一次吧！";
+    
+    // 獲取DOM元素
+    const slot1 = document.getElementById('slot1');
+    const slot2 = document.getElementById('slot2');
+    const slot3 = document.getElementById('slot3');
+    const lever = document.getElementById('lever');
+    const spinBtn = document.getElementById('spin-btn');
+    const resultDisplay = document.getElementById('result');
+    const playCountDisplay = document.getElementById('play-count');
+    const countdownDisplay = document.getElementById('countdown');
+    
+    // 初始化遊戲狀態
+    let canPlay = true;
+    
+    // 檢查localStorage中的遊戲記錄
+    function checkGameStatus() {
+      const today = new Date().toLocaleDateString();
+      const lastPlayDate = localStorage.getItem('lastPlayDate');
+      const playCount = localStorage.getItem('playCount') || 0;
+      
+      playCountDisplay.textContent = `${playCount}/1`;
+      
+      if (lastPlayDate === today && playCount >= 1) {
+        canPlay = false;
+        spinBtn.disabled = true;
+        spinBtn.textContent = "今日已玩過";
+        startCountdown();
       }
     }
+    
+    // 開始倒計時到下一天
+    function startCountdown() {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      const updateCountdown = () => {
+        const now = new Date();
+        const diff = tomorrow - now;
+        
+        if (diff <= 0) {
+          resetGame();
+          return;
+        }
+        
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        countdownDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      };
+      
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+    
+    // 重置遊戲狀態
+    function resetGame() {
+      localStorage.setItem('playCount', '0');
+      playCountDisplay.textContent = "0/1";
+      spinBtn.disabled = false;
+      spinBtn.textContent = "旋轉拉桿！";
+      canPlay = true;
+      countdownDisplay.textContent = "24:00:00";
+    }
+    
+    // 模擬數據提交到Google Sheet
+    function submitToGoogleSheet(isWin) {
+      const now = new Date();
+      const timestamp = now.toLocaleString();
+      const userAgent = navigator.userAgent;
+      
+      // 這裡應該是實際的Google Apps Script部署URL
+      const scriptURL = 'https://script.google.com/macros/s/你的GoogleScriptID/exec';
+      
+      const formData = new FormData();
+      formData.append('timestamp', timestamp);
+      formData.append('result', isWin ? 'win' : 'lose');
+      formData.append('device', userAgent);
+      
+      // 實際部署時需要取消註解以下代碼
+      /*
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => console.log('Success:', response))
+      .catch(error => console.error('Error:', error));
+      */
+      
+      // 模擬成功提交
+      console.log(`提交數據到Google Sheet: 
+        時間: ${timestamp}
+        結果: ${isWin ? '中獎' : '未中獎'}
+        設備: ${userAgent}`);
+    }
+    
+    // 旋轉老虎機
+    function spin() {
+      if (!canPlay) return;
+      
+      const today = new Date().toLocaleDateString();
+      const lastPlayDate = localStorage.getItem('lastPlayDate');
+      
+      // 如果是新的一天，重置遊戲次數
+      if (lastPlayDate !== today) {
+        localStorage.setItem('playCount', '0');
+      }
+      
+      // 更新遊戲次數
+      const playCount = parseInt(localStorage.getItem('playCount') || 0;
+      localStorage.setItem('playCount', (playCount + 1).toString());
+      localStorage.setItem('lastPlayDate', today);
+      
+      playCountDisplay.textContent = `1/1`;
+      
+      // 禁用按鈕並開始動畫
+      spinBtn.disabled = true;
+      lever.classList.add('pulled');
+      
+      // 重設結果顯示
+      resultDisplay.textContent = '';
+      resultDisplay.classList.remove('jackpot');
+      
+      // 添加旋轉動畫
+      slot1.classList.add('spinning');
+      slot2.classList.add('spinning');
+      slot3.classList.add('spinning');
+      
+      // 計算是否中獎
+      const isWin = Math.random() < jackpotChance;
+      
+      // 模擬旋轉過程
+      let spins = 0;
+      const spinInterval = setInterval(() => {
+        slot1.textContent = icons[Math.floor(Math.random() * icons.length)];
+        slot2.textContent = icons[Math.floor(Math.random() * icons.length)];
+        slot3.textContent = icons[Math.floor(Math.random() * icons.length)];
+        
+        spins++;
+        
+        if (spins > 15) {
+          clearInterval(spinInterval);
+          
+          // 停止動畫並顯示結果
+          slot1.classList.remove('spinning');
+          slot2.classList.remove('spinning');
+          slot3.classList.remove('spinning');
+          
+          if (isWin) {
+            slot1.textContent = jackpotIcon;
+            slot2.textContent = jackpotIcon;
+            slot3.textContent = jackpotIcon;
+            
+            resultDisplay.innerHTML = "🎉 恭喜中獎！請出示此畫面兌換 <strong>波士頓花生奶油堡</strong> 🎁";
+            resultDisplay.classList.add('jackpot');
+            
+            // 提交中獎數據到Google Sheet
+            submitToGoogleSheet(true);
+          } else {
+            // 隨機顯示三個圖示
+            const values = [
+              icons[Math.floor(Math.random() * icons.length)],
+              icons[Math.floor(Math.random() * icons.length)],
+              icons[Math.floor(Math.random() * icons.length)]
+            ];
+            
+            slot1.textContent = values[0];
+            slot2.textContent = values[1];
+            slot3.textContent = values[2];
+            
+            if (values[0] === values[1] && values[1] === values[2]) {
+              resultDisplay.innerHTML = "⭐️ 三個一樣！不過不是花生堡喔，下次加油！";
+            } else {
+              resultDisplay.innerHTML = "😅 沒中喔～明天再來試試手氣！";
+            }
+            
+            // 提交未中獎數據到Google Sheet
+            submitToGoogleSheet(false);
+          }
+          
+          // 更新按鈕狀態
+          spinBtn.textContent = "今日已玩過";
+          canPlay = false;
+          startCountdown();
+        }
+      }, 100);
+    }
+    
+    // 事件監聽
+    spinBtn.addEventListener('click', spin);
+    lever.addEventListener('click', spin);
+    
+    // 初始化遊戲狀態
+    checkGameStatus();
+    
+    // 頁面加載時顯示一些動畫效果
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelector('.logo').style.transform = 'scale(1)';
+      }, 500);
+    });
   </script>
-
 </body>
 </html>
