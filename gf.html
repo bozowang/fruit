@@ -110,19 +110,18 @@
     <div class="instructions" style="margin-top:25px;">
         <h3 style="text-align:center;">遊戲規則</h3>
         <ul>
-            <li><i class="fas fa-calendar-day"></i> <strong>每日限定：</strong> 每個帳號每天僅限遊玩一個回合 (3次機會)。</li>
+             <li><i class="fas fa-calendar-day"></i> <strong>每日限定：</strong> 每個帳號每天僅限遊玩一個回合 (3次機會)。</li>
         <li><i class="fas fa-id-card"></i> <strong>身份驗證：</strong> 中獎者需出示與註冊姓名相符之**合法證件**領獎。</li>
         <li><i class="fas fa-dice"></i> <strong>幸運中獎：</strong> 六骰相同即中「波士頓花生奶油堡」。</li>
         <li><i class="fas fa-star"></i> <strong>保底機制：</strong> 連續 **6 個回合** 未中獎，第 **7 回合** 首次擲骰必中「免費吃到堡」。</li>
         <li><i class="fas fa-exclamation-circle"></i> <strong>保底限領：</strong> 「免費吃到堡」大獎每位玩家限領一次。</li>
-        <li><i class="fas fa-history"></i> <strong>連續參與：</strong> 若超過 **7 天** 未參與活動，累積的保底進度將會**自動歸零**。</li>
-        </ul>
+        <li><i class="fas fa-history"></i> <strong>連續參與：</strong> 若超過 **7 天** 未參與活動，累積的保底進度將會**自動歸零**。</li> </ul>
     </div>
   </div>
   
   <script>
     // --- 前端安全設定 ---
-    const SECRET_KEY = "@Howardwang5172";
+    const SECRET_KEY = "8Q7f1i#*I2,0D8"; // 已為您設定好最終金鑰
 
     const gameState = {
       isVerified: false, isSpinning: false,
@@ -171,7 +170,7 @@
         showResult(`<div class="result-icon"><i class="fas fa-spinner fa-spin"></i></div>正在連線伺服器驗證身份...`, "loading");
         
         // ***** 這裏是本次最重要的修改 *****
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyhFX6hR0RgyrWlZi-iXXtWWUJKaLD65VNfQwHAoehw6k2DtAuS8elUD0Nq02uT0ujJrA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzKG0R4tATifPiFnRkg0CBy0OMYI7C2Y2HJjWvdI3rFbbofg37mFVWhFY8R_WKFOAdOWA/exec';
         
         const verificationURL = `${scriptURL}?action=verifyPlayer&name=${encodeURIComponent(name)}&code=${encodeURIComponent(code)}&key=${SECRET_KEY}`;
         
@@ -318,7 +317,7 @@
     
     function logToGoogleSheets(isWin, prize, remark) {
       // ***** 這裏是本次最重要的修改 *****
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbyhFX6hR0RgyrWlZi-iXXtWWUJKaLD65VNfQwHAoehw6k2DtAuS8elUD0Nq02uT0ujJrA/exec';
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzKG0R4tATifPiFnRkg0CBy0OMYI7C2Y2HJjWvdI3rFbbofg37mFVWhFY8R_WKFOAdOWA/exec';
       const data = {
         numberCode: gameState.playerInfo.numberCode, nameTail: gameState.playerInfo.nameTail,
         isWin: isWin, ip: gameState.ipAddress, prize: prize, remark: remark,
