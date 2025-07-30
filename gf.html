@@ -45,10 +45,7 @@
       background: linear-gradient(45deg, var(--primary), var(--secondary)); color: var(--text-light);
       font-weight: 700; cursor: pointer; display: block; margin: 20px auto 0;
     }
-    /* --- 新增：登出按鈕的特殊樣式 --- */
-    #logoutBtn {
-        background: linear-gradient(45deg, #6c757d, #343a40);
-    }
+    #logoutBtn { background: linear-gradient(45deg, #6c757d, #343a40); }
     button:disabled { opacity: 0.7; cursor: not-allowed; }
     .slot-machine { background: var(--slot-bg); border-radius: 15px; padding: 20px; margin: 20px 0; display: none; }
     .reels-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; perspective: 1000px; }
@@ -189,7 +186,7 @@
                 loginPlayer(name, code);
 
             } else if (result.status === 'PLAYED_TODAY') {
-                showDailyLockScreen(name); // 傳入玩家名稱
+                showDailyLockScreen(name);
             } else { throw new Error(result.message || '未知的伺服器錯誤'); }
         } catch (error) { showResult(`<div class="result-icon">❌</div>驗證失敗：${error.message}`, "error"); }
     }
@@ -241,11 +238,13 @@
         slotMachine.style.display = 'none';
         formSection.style.display = 'none';
         
-        // --- 新增：顯示登出按鈕 ---
         showResult(`<div class="result-icon">⏳</div>玩家 ${name}，<br>您今日的回合已結束！<br>下次開放倒數：<div id="daily-countdown">--:--:--</div><br><button id="logoutBtn">登出並換下一位</button>`, "error");
 
+        // --- 修正處：將事件綁定移到 showResult 的回呼中 ---
         setTimeout(() => {
-            document.getElementById('logoutBtn').addEventListener('click', logout);
+            const logoutButton = document.getElementById('logoutBtn');
+            if(logoutButton) logoutButton.addEventListener('click', logout);
+            
             const countdownElement = document.getElementById('daily-countdown');
             if (!countdownElement) return;
             const updateCountdown = () => {
@@ -262,9 +261,7 @@
         }, 250);
     }
     
-    // --- 新增：登出函數 ---
     function logout() {
-        // 簡單地重新載入頁面，回到初始狀態
         window.location.reload();
     }
 
@@ -272,7 +269,13 @@
         const prize = "免費吃到堡";
         const remark = "第7回合自動保底";
         showResult(`<div class="result-icon">🎉</div>恭喜您，${gameState.playerInfo.nameTail}！<br>您已達成連續6回合未中獎！<br>我們直接送您<b>${prize}</b>一份！<br><br><button id="logoutBtn">登出並換下一位</button>`, "jackpot");
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        // --- 修正處：將事件綁定移到 showResult 的回呼中 ---
+        setTimeout(() => {
+            const logoutButton = document.getElementById('logoutBtn');
+            if(logoutButton) logoutButton.addEventListener('click', logout);
+        }, 250);
+
         confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
         logToGoogleSheets(true, prize, remark);
         gameState.playerData.hasClaimedGuaranteedPrize = true;
@@ -312,7 +315,13 @@
       gameState.spinsRemaining--;
       if (isWin) {
         showResult(`<div class="result-icon">🎉</div>恭喜中獎！<br>您贏得<b>${prize}</b>一份！<br>(${remark})<br><br><button id="logoutBtn">登出並換下一位</button>`, "jackpot");
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        // --- 修正處：將事件綁定移到 showResult 的回呼中 ---
+        setTimeout(() => {
+            const logoutButton = document.getElementById('logoutBtn');
+            if(logoutButton) logoutButton.addEventListener('click', logout);
+        }, 250);
+
         confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
         gameState.playerData.roundCount = 0;
         endGameSession(true);
@@ -324,7 +333,13 @@
             spinBtn.textContent = `擲骰子 (剩餘 ${gameState.spinsRemaining} 次)`;
         } else {
             showResult(`<div class="result-icon">😥</div>今日 3 次機會已用完，<br>請點擊下方按鈕登出。<br><button id="logoutBtn">登出並換下一位</button>`, "error");
-            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // --- 修正處：將事件綁定移到 showResult 的回呼中 ---
+            setTimeout(() => {
+                const logoutButton = document.getElementById('logoutBtn');
+                if(logoutButton) logoutButton.addEventListener('click', logout);
+            }, 250);
+
             gameState.playerData.roundCount++;
             endGameSession(false);
         }
